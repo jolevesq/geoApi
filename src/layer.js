@@ -42,6 +42,8 @@ const serviceType = {
     FeatureService: 'featureservice',
     DynamicService: 'dynamicservice',
     ImageService: 'imageservice',
+    VectorService: 'vectorservice',
+    WMTSService: 'wmtsservice',
     WMS: 'wms',
     Unknown: 'unknown',
     Error: 'error'
@@ -1103,6 +1105,9 @@ module.exports = function (esriBundle, geoApi) {
         ScreenPoint: esriBundle.ScreenPoint,
         Query: esriBundle.Query,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
+        VectorTileLayer: esriBundle.VectorTileLayer,
+        WMTSLayer: esriBundle.WMTSLayer,
+        WMTSLayerInfo: esriBundle.WMTSLayerInfo,
         ogc: ogc(esriBundle),
         bbox: bbox(esriBundle, geoApi),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,

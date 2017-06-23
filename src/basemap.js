@@ -43,7 +43,10 @@ module.exports = function (esriBundle) {
             basemapConfig.layers.forEach(layerConfig => {
                 // create basemap, add to basemap gallery
                 let layer = new esriBundle.BasemapLayer({
-                    url: layerConfig.url
+                    url: layerConfig.url,
+                    type: layerConfig.type,
+                    styleUrl: layerConfig.styleUrl,
+                    templateUrl: layerConfig.templateUrl
                 });
 
                 layers.push(layer);

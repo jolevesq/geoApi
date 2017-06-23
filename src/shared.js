@@ -17,6 +17,10 @@ function getLayerTypeBuilder(esriBundle) {
             return 'ArcGISDynamicMapServiceLayer';
         } else if (layer instanceof esriBundle.ArcGISTiledMapServiceLayer) {
             return 'ArcGISTiledMapServiceLayer';
+        } else if (layer instanceof esriBundle.VectorTileLayer) {
+            return 'VectorTileLayer';
+        } else if (layer instanceof esriBundle.WMTSLayer){
+            return 'WMTSLayer';
         } else {
             // Can add more types above as we support them
             return 'UNKNOWN';

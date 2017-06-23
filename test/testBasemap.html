@@ -12,225 +12,88 @@
     <div id="map" style="height:90%; width: 100%;"></div>
     <script src="../dist/geoapi.js"></script>
     <script>
-        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
-            map.addLayer(new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0'));
+        var esriMap;
+        geoapi('http://js.arcgis.com/3.20/', window).then(function (api) {
+            api.mapManager.setProxy('http://cp.zz9.ca/index');
+            var extentLCC = api.mapManager.Extent(-1651320, 4885090, 8887040, 11367400, new api.proj.SpatialReference({ wkid: 3978 }));
+            var extentWeb = api.mapManager.Extent(-20037507, -20037507, 20037507, 20037507, new api.proj.SpatialReference({ wkid: 102100 }));
+            var extentLL = api.mapManager.Extent(-180, -90, 180, 90, new api.proj.SpatialReference({ wkid: 4326 }));
+            esriMap = api.mapManager.Map(document.getElementById('map'), { extent: extentWeb });
 
-            var settings = {"basemaps": [
-            {
-                "uid": "baseNrCan",
-                "layers": [
+            var settingsLCC = {"basemaps": [
                 {
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/baseToponrcan.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Topographic",
-                "title": "@@config.basemaps.baseNrCan.name",
-                "altText": "@@config.basemaps.baseNrCan.altText",
-                "tileSchema": "NRCAN_Lambert_3978",
-                "description": "@@config.basemaps.baseNrCan.description",
-                "spatialReference": {
-                    "wkid": 3978
-                }
-            },
-            {
-                "uid": "baseSimple",
-                "layers": [
-                {
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                  "id": "baseNrCan",
+                  "layers": [{
+                      "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/WMTS/tile/1.0.0/BaseMaps_CBCT3978/",
+                      "type": "WebTiledLayer",
+                      "templateUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer/WMTS/tile/1.0.0/BaseMaps_CBCT3978/default/default028mm/${level}/${row}/${col}.jpg"
+                    }]
                 },
                 {
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_TXT_3978/MapServer"
-                },
+                  "id": "baseSimple",
+                  "layers": [{
+                      "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                    }]
+              }]
+            };
+
+            var settingsWeb = {"basemaps": [
                 {
-                    "url": "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/RAMP_NRSTC/MapServer",
-                    "visibleLayers": [ 0 ]
-                }
-                ],
-                "thumbnail": "assets/images/basemap/baseSimple.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Topographic",
-                "title": "@@config.basemaps.baseSimple.name",
-                "altText": "@@config.basemaps.baseSimple.altText",
-                "tileSchema": "NRCAN_Lambert_3978",
-                "description": "@@config.basemaps.baseSimple.description",
-                "spatialReference": {
-                    "wkid": 3978
-                }
-            },
-            {
-                "uid": "baseCBME_CBCE_HS_RO_3978",
-                "layers": [
-                {
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Topographic",
-                "title": "@@config.basemaps.baseCBME_CBCE_HS_RO_3978.name",
-                "altText": "@@config.basemaps.baseCBME_CBCE_HS_RO_3978.altText",
-                "tileSchema": "NRCAN_Lambert_3978",
-                "description": "@@config.basemaps.baseCBME_CBCE_HS_RO_3978.description",
-                "spatialReference": {
-                    "wkid": 3978
-                }
-            },
-            {
-                "uid": "baseCBMT_CBCT_GEOM_3978",
-                "layers": [
-                {
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Topographic",
-                "title": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.name",
-                "altText": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.altText",
-                "tileSchema": "NRCAN_Lambert_3978",
-                "description": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.description",
-                "spatialReference": {
-                    "wkid": 3978
-                }
-            },
-            {
-                "uid": "baseEsriWorld",
-                "layers": [
-                {
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/imagery.jpg",
-                "scaleCssClass": "map-scale-light",
-                "type": "Imagery",
-                "title": "@@config.basemaps.baseEsriWorld.name",
-                "altText": "@@config.basemaps.baseEsriWorld.altText",
-                "tileSchema": "ESRI_World_AuxMerc_3857",
-                "description": "@@config.basemaps.baseEsriWorld.description",
-                "spatialReference": {
-                    "wkid": 102100,
-                    "latestWkid":  3857
-                }
-            },
-            {
-                "uid": "baseEsriPhysical",
-                "layers": [
-                {
+                  "id": "baseNrCan",
+                  "name": "Vector tile",
+                  "layers": [{
+                      "styleUrl": "https://www.arcgis.com/sharing/rest/content/items/dfcb45f8a2ad4b58a1a7547188a0a00c/resources/styles/root.json",
+                      "type": "VectorTileLayer"
+                    }]
+              },
+              {
+                "id": "baseSimple",
+                "name": "World Physical Map",
+                "layers": [{
                     "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/imagery.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Imagery",
-                "title": "@@config.basemaps.baseEsriPhysical.name",
-                "altText": "@@config.basemaps.baseEsriPhysical.altText",
-                "tileSchema": "ESRI_World_AuxMerc_3857",
-                "description": "@@config.basemaps.baseEsriPhysical.description",
-                "spatialReference": {
-                    "wkid": 102100,
-                    "latestWkid":  3857
-                }
-            },
-            {
-                "uid": "baseEsriRelief",
-                "layers": [
-                {
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/imagery.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Imagery",
-                "title": "@@config.basemaps.baseEsriRelief.name",
-                "altText": "@@config.basemaps.baseEsriRelief.altText",
-                "tileSchema": "ESRI_World_AuxMerc_3857",
-                "description": "@@config.basemaps.baseEsriRelief.description",
-                "spatialReference": {
-                    "wkid": 102100,
-                    "latestWkid":  3857
-                }
-            },
-            {
-                "uid": "baseEsriStreet",
-                "layers": [
-                {
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/imagery.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Topographic",
-                "title": "@@config.basemaps.baseEsriStreet.name",
-                "altText": "@@config.basemaps.baseEsriStreet.altText",
-                "tileSchema": "ESRI_World_AuxMerc_3857",
-                "description": "@@config.basemaps.baseEsriStreet.description",
-                "spatialReference": {
-                    "wkid": 102100,
-                    "latestWkid":  3857
-                }
-            },
-            {
-                "uid": "baseEsriTerrain",
-                "layers": [
-                {
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/imagery.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Topographic",
-                "title": "@@config.basemaps.baseEsriTerrain.name",
-                "altText": "@@config.basemaps.baseEsriTerrain.altText",
-                "tileSchema": "ESRI_World_AuxMerc_3857",
-                "description": "@@config.basemaps.baseEsriTerrain.description",
-                "spatialReference": {
-                    "wkid": 102100,
-                    "latestWkid":  3857
-                }
-            },
-            {
-                "uid": "baseEsriTopo",
-                "layers": [
-                {
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
-                }
-                ],
-                "thumbnail": "assets/images/basemap/imagery.jpg",
-                "scaleCssClass": "map-scale-dark",
-                "type": "Topographic",
-                "title": "@@config.basemaps.baseEsriTopo.name",
-                "altText": "@@config.basemaps.baseEsriTopo.altText",
-                "tileSchema": "ESRI_World_AuxMerc_3857",
-                "description": "@@config.basemaps.baseEsriTopo.description",
-                "spatialReference": {
-                    "wkid": 102100,
-                    "latestWkid":  3857
-                }
+                  }]
+              },
+              {
+                "id": "baseWMTS",
+                "name": "WMTS ESRI",
+                "layers": [{
+                    "url": "http://services.arcgisonline.com/arcgis/rest/services/Demographics/USA_Population_Density/MapServer/WMTS/tile/1.0.0/Demographics_USA_Population_Density",
+                    "type": "WebTiledLayer",
+                    "templateUrl": "http://services.arcgisonline.com/arcgis/rest/services/Demographics/USA_Population_Density/MapServer/WMTS/tile/1.0.0/Demographics_USA_Population_Density/default/GoogleMapsCompatible/${level}/${row}/${col}.jpg"
+                  }]
+               }]
             }
-            ]};
 
-            // // test basemap gallery
-            // var basemapGallery = api.basemap.makeBasemaps(settings.basemaps, map, 'basemapG');
-            // // switch to different basemap by id
-            // basemapGallery.setBasemap('baseEsriStreet');
+            var settingsLL = {"basemaps": [
+                {
+                  "id": "baseNrCan",
+                  "name": "WMTS",
+                  "layers": [
+                      {
+                        "url": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best",
+                        "type": "WebTiledLayer",
+                        "templateUrl": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/2012-07-09/250m/${level}/${row}/${col}.jpg"
+                    }
+                  ]
+              }]
+          }
 
-            // // var setupMap = api.mapManager.setupMap(map, settings);
-
-            // var basemapGallery = api.mapManager.setupMap(map, settings);
-
-            // basemapGallery.setBasemap('baseEsriStreet');
-            var mapControls = api.mapManager.setupMap(map, settings);
-
-            // set default then switch after 3 sec.
-            mapControls.BasemapControl.setBasemap('baseEsriStreet');
+            var mapControls = api.mapManager.setupMap(esriMap, settingsWeb);
+            // mapControls.BasemapControl.setBasemap('baseSimple') // need to load baseSimple before to set spatial ref. If not Vector wont load.
 
             // make sure returned object works properly
             setTimeout(() => {
-                mapControls.BasemapControl.setBasemap('baseEsriPhysical');
-            }, 3000);
+                mapControls.BasemapControl.setBasemap('baseWMTS');
+                esriMap.addLayer(new api.layer.FeatureLayer('http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/15'));
+                // esriMap.addLayer(new api.layer.VectorTileLayer('https://www.arcgis.com/sharing/rest/content/items/dfcb45f8a2ad4b58a1a7547188a0a00c/resources/styles/root.json'));
+                // var WMTSInfo = new api.layer.WMTSLayerInfo({
+                //                                             identifier: "SP1996NC_3857",
+                //                                             tileMatrixSet: "GoogleMapsCompatible",
+                //                                             format: "png"
+                //                                         });
+                // var options = { serviceMode: "RESTful", layerInfo: WMTSInfo}
+                // esriMap.addLayer(new api.layer.WMTSLayer('https://gibs.earthdata.nasa.gov/wmts//epsg4326/best'));
+            }, 4000);
 
         });
 </script>
